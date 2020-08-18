@@ -16,6 +16,36 @@ function Clip ({clipdata}) {
   );
 }
 
+class DateSelect extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {dateRange: props.dateRange};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.onChange = props.onChange;
+  }
+
+  handleChange(event) {
+    this.setState({dateRange: event.target.value});
+    this.onChange(event.target.value);
+  }
+
+  render() {
+    return (
+      <label>
+        Filter by:
+        <select value={this.state.dateRange} onChange={this.handleChange}>
+          <option value="1">24H</option>
+          <option value="7">7D</option>
+          <option value="30">30D</option>
+          <option value="0">All</option>
+        </select>
+      </label>
+    );
+  }
+}
+
 class App extends React.Component {
 
   // On page start check if this is a return with the access token
@@ -28,7 +58,14 @@ class App extends React.Component {
       authToken = re.exec(document.location.hash)[1];
       api = new API(authToken);
     }
-    this.state = {clips: [], clipdatas: [], api: api, user: null}
+    this.state = {clips: [<div>Loading clips...please wait</div>], clipdatas: [], api: api, user: null, dateRange: 1}
+
+    this.handleDateChange = this.handleDateChange.bind(this);
+  }
+
+  handleDateChange(value) {
+    this.setState({dateRange: value, clips: [<div>Loading clips...please wait</div>], clipdatas: []});
+    this.renderClips();
   }
 
   componentDidMount() {
@@ -44,7 +81,7 @@ class App extends React.Component {
     if (this.state.api !== null) {
       user = await this.state.api.getUser();
       follows = await this.state.api.getFollows(user.data.data[0].id);
-      clipData = await this.state.api.getAllClips(follows.data.data);
+      clipData = await this.state.api.getAllClips(follows.data.data, parseInt(this.state.dateRange));
     }
     
     console.debug(clipData);
@@ -55,6 +92,9 @@ class App extends React.Component {
     // If not logged in use oauth to get the user profile
     if (clipData === null) {
       clips.push(<a key="loginlink" href={API.getLoginLink()}>Login to Twitch to see Clips</a>);
+      this.setState({
+        clips: clips,
+      })
 
     } else {
       for (let result of clipData) {
@@ -72,6 +112,10 @@ class App extends React.Component {
         return (b.view_count - a.view_count);
       });
 
+      if (clipdatas.length === 0) {
+        clips.push(<div>There are no clips from your follows that meet the specified criteria.</div>)
+      }
+
       for(let clip of clipdatas) {
         clips.push(<Clip key={clip.id} clipdata={clip}/>);
       }
@@ -88,7 +132,12 @@ class App extends React.Component {
   }
 
   render () {
-    return (<div className="clipOuterDiv">{this.state.clips}</div>);
+    return (
+      <div>
+        <div><DateSelect dateRange={this.state.dateRange} onChange={this.handleDateChange} /></div>
+        <div className="clipOuterDiv">{this.state.clips}</div>
+      </div>
+    );
   }
 }
 

@@ -11,30 +11,41 @@ export default class API {
     axios.defaults.headers.common['Client-ID'] = constants.TWITCH_CLIENT_ID;
   }
 
-  // Get all clips from a user's followed streamers and categories
-  async getAllClips(follows) {
+  // Get all clips from a user's followed streamers
+  // TODO: Add categories?
+  async getAllClips(follows, dateRange) {
 
     let url = 'https://api.twitch.tv/helix/clips';
 
-    //console.log(this.authtoken);
+    console.log(dateRange);
 
     if (this.authtoken === null) {
       return null;
     }
     
 
+    let now = new Date();
     let start_date = new Date();
-    start_date.setDate(start_date.getDate() - 1);
+    start_date.setDate(start_date.getDate() - dateRange);
 
     let cliparray = [];
 
     for (let follow of follows) {
-      let params = {
-        broadcaster_id : follow.to_id, 
-        started_at: start_date.toISOString(),
-        first: 10,
-      };
-  
+      let params;
+      
+      if (dateRange !== 0) {
+        params = {
+          broadcaster_id : follow.to_id, 
+          started_at: start_date.toISOString(),
+          ended_at: now.toISOString(),
+          first: 10,
+        };
+      } else {
+        params = {
+          broadcaster_id : follow.to_id, 
+          first: 10,
+        };
+      }
       let options = {
         params: params,
       }
@@ -72,6 +83,7 @@ export default class API {
     return this.authtoken;
   }
 
+  // Create the login link for oauth2 authentication
   static getLoginLink() {
     
     let url = this.TWITCH_LOGIN_LINK;
@@ -92,5 +104,5 @@ export default class API {
 }
 
 API.TWITCH_LOGIN_LINK = 'https://id.twitch.tv/oauth2/authorize';
-API.LOCALREDIRECT = 'http://localhost:3000';
+API.LOCALREDIRECT = 'http://73.140.192.135:3000';
 API.TWITCH_GETUSER_LINK = 'https://api.twitch.tv/helix/users';
