@@ -53,36 +53,69 @@ class App extends React.Component {
     super(props);
     let authToken = null;
     let api = null;
+    // If this is a redirection from a successful login get the auth token from the url
     if (document.location.hash !== "") {
       let re = /access_token=([^&]+)/;
       authToken = re.exec(document.location.hash)[1];
       api = new API(authToken);
     }
-    this.state = {clips: [<div>Loading clips...please wait</div>], clipdatas: [], api: api, user: null, dateRange: 1}
+    this.state = {clips: [<div>Loading clips...please wait</div>], api: api, user: null, dateRange: 1,
+      clipdatas0: null,
+      clipdatas1: null,
+      clipdatas7: null,
+      clipdatas30: null,
+      clipexpire0: null,
+      clipexpire1: null,
+      clipexpire7: null,
+      clipexpire30: null,};
 
     this.handleDateChange = this.handleDateChange.bind(this);
   }
 
+  resetToLogin() {
+    
+    let clips = [<a key="loginlink" href={API.getLoginLink()}>Login to Twitch to see Clips</a>];
+    this.setState({
+      clips: clips,
+    })
+  }
+
   handleDateChange(value) {
-    this.setState({dateRange: value, clips: [<div>Loading clips...please wait</div>], clipdatas: []});
-    this.renderClips();
+    let newState = {dateRange: value, clips: [<div>Loading clips...please wait</div>]}
+    this.setState(newState);
+    this.renderClips(value);
   }
 
   componentDidMount() {
-    this.renderClips();
+    this.renderClips(1);
   }
 
   // Loads clips as an array of Clip objects
-  renderClips = async() => {
+  renderClips = async(value) => {
 
+    let usingCache = false;
     let clipData = null;
     let user = null;
     let follows = null;
     if (this.state.api !== null) {
-      user = await this.state.api.getUser();
-      follows = await this.state.api.getFollows(user.data.data[0].id);
-      clipData = await this.state.api.getAllClips(follows.data.data, parseInt(this.state.dateRange));
+      let expireDate = new Date();
+      expireDate.setHours(expireDate.getHours() - 1);
+      let cacheDate = this.state['clipexpire' + value];
+      if (cacheDate != null && cacheDate > expireDate) {
+        clipData = this.state['clipdatas' + value];
+        usingCache = true;
+      } else {
+        user = await this.state.api.getUser();
+        if (user.status !== 200) {
+          this.resetToLogin();
+          return;
+        }
+        follows = await this.state.api.getFollows(user.data.data[0].id);
+        clipData = await this.state.api.getAllClips(follows.data.data, parseInt(value));
+      }
     }
+
+    
     
     console.debug(clipData);
 
@@ -97,15 +130,22 @@ class App extends React.Component {
       })
 
     } else {
-      for (let result of clipData) {
-        if (result.status === "fulfilled") {
-          for (let clip of result.value.data.data) { 
-            clipdatas.push(clip);
-            //clips.push(<Clip key={clip.id} clipdata={clip}/>);
-          }
-        } else {
-          console.error(result.reason);
-        }  
+      if (usingCache) {
+        for (let clip of clipData) {
+          clipdatas.push(clip); 
+        }
+      } else {
+        for (let result of clipData) {
+          //console.debug(result);
+          if (result.status === "fulfilled") {
+            for (let clip of result.value.data.data) { 
+              clipdatas.push(clip);
+              //clips.push(<Clip key={clip.id} clipdata={clip}/>);
+            }
+          } else {
+            console.error(result.reason);
+          }  
+        }
       }
 
       clipdatas.sort((a, b) => {
@@ -120,11 +160,12 @@ class App extends React.Component {
         clips.push(<Clip key={clip.id} clipdata={clip}/>);
       }
 
-      this.setState({
-        clipdatas: clipdatas,
-        clips: clips,
-        user: user
-      })
+      let newstate = {clips: clips, user: user};
+      if (!usingCache) {
+        newstate['clipdatas' + value] = clipdatas;
+        newstate['clipexpire' + value] = Date.now();
+      }
+      this.setState(newstate);
     }
 
 
