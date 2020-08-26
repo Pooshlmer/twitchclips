@@ -6,6 +6,10 @@ import * as constants from './secret.js';
 
 export default class API {
   constructor(authtoken) {
+
+    this.NUMBER_OF_FOLLOWS = 100;
+    this.CLIPS_PER_FOLLOW = 10;
+
     this.authtoken = authtoken;
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + authtoken;
     axios.defaults.headers.common['Client-ID'] = constants.TWITCH_CLIENT_ID;
@@ -38,12 +42,12 @@ export default class API {
           broadcaster_id : follow.to_id, 
           started_at: start_date.toISOString(),
           ended_at: now.toISOString(),
-          first: 10,
+          first: this.CLIPS_PER_FOLLOW,
         };
       } else {
         params = {
           broadcaster_id : follow.to_id, 
-          first: 10,
+          first: this.CLIPS_PER_FOLLOW,
         };
       }
       let options = {
@@ -67,7 +71,7 @@ export default class API {
 
     let params = {
       from_id: user_id,
-      first: 100,
+      first: this.NUMBER_OF_FOLLOWS,
     }
 
     let options = {
@@ -104,5 +108,5 @@ export default class API {
 }
 
 API.TWITCH_LOGIN_LINK = 'https://id.twitch.tv/oauth2/authorize';
-API.LOCALREDIRECT = 'http://73.140.192.135:3000';
+API.LOCALREDIRECT = constants.REDIRECT;
 API.TWITCH_GETUSER_LINK = 'https://api.twitch.tv/helix/users';

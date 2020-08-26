@@ -1,4 +1,6 @@
 import React from 'react';
+import { instanceOf } from 'prop-types';
+import { withCookies, Cookies } from 'react-cookie';
 import API from './api.js';
 import './App.css';
 
@@ -48,9 +50,15 @@ class DateSelect extends React.Component {
 
 class App extends React.Component {
 
+  static propTypes = {
+    cookies: instanceOf(Cookies).isRequired
+  };
+
   // On page start check if this is a return with the access token
   constructor(props) {
     super(props);
+
+    //const { cookies } = props;
     let authToken = null;
     let api = null;
     // If this is a redirection from a successful login get the auth token from the url
@@ -59,7 +67,7 @@ class App extends React.Component {
       authToken = re.exec(document.location.hash)[1];
       api = new API(authToken);
     }
-    this.state = {clips: [<div>Loading clips...please wait</div>], api: api, user: null, dateRange: 1,
+    this.state = {clips: [<div>Loading clips...please wait</div>], api: api, dateRange: 1,
       clipdatas0: null,
       clipdatas1: null,
       clipdatas7: null,
@@ -97,6 +105,9 @@ class App extends React.Component {
     let clipData = null;
     let user = null;
     let follows = null;
+
+    const { cookies } = this.props;
+
     if (this.state.api !== null) {
       let expireDate = new Date();
       expireDate.setHours(expireDate.getHours() - 1);
@@ -105,19 +116,30 @@ class App extends React.Component {
         clipData = this.state['clipdatas' + value];
         usingCache = true;
       } else {
-        user = await this.state.api.getUser();
-        if (user.status !== 200) {
+        let userId = null;
+        // Can save an api call using cookies
+        if (cookies.get('userId') != null) {
+          userId = cookies.get('userId');
+        } else {
+          user = await this.state.api.getUser();
+          if (user.status !== 200) {
+            this.resetToLogin();
+            return;
+          }
+          cookies.set('userId', user.data.data[0].id);
+        }
+        follows = await this.state.api.getFollows(userId);
+        if (follows.status !== 200) {
           this.resetToLogin();
           return;
         }
-        follows = await this.state.api.getFollows(user.data.data[0].id);
         clipData = await this.state.api.getAllClips(follows.data.data, parseInt(value));
       }
     }
 
     
     
-    console.debug(clipData);
+    //console.debug(clipData);
 
     let clipdatas = [];
     let clips = [];
@@ -160,16 +182,13 @@ class App extends React.Component {
         clips.push(<Clip key={clip.id} clipdata={clip}/>);
       }
 
-      let newstate = {clips: clips, user: user};
+      let newstate = {clips: clips};
       if (!usingCache) {
         newstate['clipdatas' + value] = clipdatas;
         newstate['clipexpire' + value] = Date.now();
       }
       this.setState(newstate);
     }
-
-
-    
   }
 
   render () {
@@ -182,4 +201,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withCookies(App);
