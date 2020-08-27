@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/Pooshlmer/twitchclips/static/css/main.6c061686.chunk.css",
+    "main.js": "/Pooshlmer/twitchclips/static/js/main.49e64814.chunk.js",
+    "main.js.map": "/Pooshlmer/twitchclips/static/js/main.49e64814.chunk.js.map",
+    "runtime-main.js": "/Pooshlmer/twitchclips/static/js/runtime-main.3dc94658.js",
+    "runtime-main.js.map": "/Pooshlmer/twitchclips/static/js/runtime-main.3dc94658.js.map",
+    "static/js/2.f64f49de.chunk.js": "/Pooshlmer/twitchclips/static/js/2.f64f49de.chunk.js",
+    "static/js/2.f64f49de.chunk.js.map": "/Pooshlmer/twitchclips/static/js/2.f64f49de.chunk.js.map",
+    "index.html": "/Pooshlmer/twitchclips/index.html",
+    "precache-manifest.8defcb5d6290ec0c6af549d93cb96f10.js": "/Pooshlmer/twitchclips/precache-manifest.8defcb5d6290ec0c6af549d93cb96f10.js",
+    "service-worker.js": "/Pooshlmer/twitchclips/service-worker.js",
+    "static/css/main.6c061686.chunk.css.map": "/Pooshlmer/twitchclips/static/css/main.6c061686.chunk.css.map",
+    "static/js/2.f64f49de.chunk.js.LICENSE.txt": "/Pooshlmer/twitchclips/static/js/2.f64f49de.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.3dc94658.js",
+    "static/js/2.f64f49de.chunk.js",
+    "static/css/main.6c061686.chunk.css",
+    "static/js/main.49e64814.chunk.js"
+  ]
+}
