@@ -2,11 +2,9 @@ This react project takes a twitch login through oauth and shows the top clips fr
 It takes about 5-10 seconds to load the first page due to doing many api calls.
 
 
-You will need to make an additional file called secret.js with these values:
+You will need to edit secret.js with these values:
 
 export const TWITCH_CLIENT_ID = <your public twitch client id>;
-
-export const TWITCH_SECRET    = <your secret twitch private key>;
 
 export const SESSION_SECRET   = <A random secret key>;
 
