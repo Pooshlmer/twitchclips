@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/twitchclips/static/css/main.6c061686.chunk.css",
-    "main.js": "/twitchclips/static/js/main.ca2bc9ec.chunk.js",
-    "main.js.map": "/twitchclips/static/js/main.ca2bc9ec.chunk.js.map",
+    "main.js": "/twitchclips/static/js/main.40fc1f52.chunk.js",
+    "main.js.map": "/twitchclips/static/js/main.40fc1f52.chunk.js.map",
     "runtime-main.js": "/twitchclips/static/js/runtime-main.82a9469d.js",
     "runtime-main.js.map": "/twitchclips/static/js/runtime-main.82a9469d.js.map",
     "static/js/2.f64f49de.chunk.js": "/twitchclips/static/js/2.f64f49de.chunk.js",
     "static/js/2.f64f49de.chunk.js.map": "/twitchclips/static/js/2.f64f49de.chunk.js.map",
     "index.html": "/twitchclips/index.html",
-    "precache-manifest.7ae815b8548259b9cb83ae0717d90da9.js": "/twitchclips/precache-manifest.7ae815b8548259b9cb83ae0717d90da9.js",
+    "precache-manifest.b43dcb193a19a2576de02a5dc5713e28.js": "/twitchclips/precache-manifest.b43dcb193a19a2576de02a5dc5713e28.js",
     "service-worker.js": "/twitchclips/service-worker.js",
     "static/css/main.6c061686.chunk.css.map": "/twitchclips/static/css/main.6c061686.chunk.css.map",
     "static/js/2.f64f49de.chunk.js.LICENSE.txt": "/twitchclips/static/js/2.f64f49de.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.82a9469d.js",
     "static/js/2.f64f49de.chunk.js",
     "static/css/main.6c061686.chunk.css",
-    "static/js/main.ca2bc9ec.chunk.js"
+    "static/js/main.40fc1f52.chunk.js"
   ]
 }
