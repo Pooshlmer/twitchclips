@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/twitchclips/precache-manifest.b43dcb193a19a2576de02a5dc5713e28.js"
+  "/twitchclips/precache-manifest.da1f6fbbc11288bcdd8d300a7dbe3cf1.js"
 );
 
 self.addEventListener('message', (event) => {
