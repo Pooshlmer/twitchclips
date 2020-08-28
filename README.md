@@ -1,6 +1,7 @@
 This react project takes a twitch login through oauth and shows the top clips from up to 100 follows of that user.
-It takes about 5-10 seconds to load the first page due to doing many api calls.
+It takes about 5-10 seconds to load the first time due to doing many api calls.
 
+You can see how it works at https://pooshlmer.github.io/twitchclips
 
 You will need to edit secret.js with these values:
 

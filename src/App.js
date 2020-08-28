@@ -109,37 +109,43 @@ class App extends React.Component {
     const { cookies } = this.props;
 
     if (this.state.api !== null) {
-      let expireDate = new Date();
-      expireDate.setHours(expireDate.getHours() - 1);
-      let cacheDate = this.state['clipexpire' + value];
-      if (cacheDate != null && cacheDate > expireDate) {
-        clipData = this.state['clipdatas' + value];
-        usingCache = true;
-      } else {
-        let userId = null;
-        // Can save an api call using cookies
-        if (cookies.get('userId') != null) {
-          userId = cookies.get('userId');
+      try {
+        let expireDate = new Date();
+        expireDate.setHours(expireDate.getHours() - 1);
+        let cacheDate = this.state['clipexpire' + value];
+        if (cacheDate != null && cacheDate > expireDate) {
+          clipData = this.state['clipdatas' + value];
+          usingCache = true;
         } else {
-          user = await this.state.api.getUser();
-          if (user.status !== 200) {
+          let userId = null;
+          // Can save an api call using cookies
+          if (cookies.get('userId') !== undefined) {
+            userId = cookies.get('userId');
+          } else {
+            user = await this.state.api.getUser();
+            if (user.status !== 200) {
+              this.resetToLogin();
+              return;
+            }
+            userId = user.data.data[0].id;
+            cookies.set('userId', userId, {secure: true, sameSite: 'strict'});
+            
+          }
+          follows = await this.state.api.getFollows(userId);
+          if (follows.status !== 200) {
             this.resetToLogin();
             return;
           }
-          cookies.set('userId', user.data.data[0].id);
+          clipData = await this.state.api.getAllClips(follows.data.data, parseInt(value));
         }
-        follows = await this.state.api.getFollows(userId);
-        if (follows.status !== 200) {
-          this.resetToLogin();
-          return;
-        }
-        clipData = await this.state.api.getAllClips(follows.data.data, parseInt(value));
+      } catch(e) {
+        console.log(e);
       }
     }
 
     
     
-    //console.debug(clipData);
+    console.debug(clipData);
 
     let clipdatas = [];
     let clips = [];

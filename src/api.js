@@ -7,6 +7,7 @@ import * as constants from './secret.js';
 export default class API {
   constructor(authtoken) {
 
+    // Options for number of clips to get
     this.NUMBER_OF_FOLLOWS = 100;
     this.CLIPS_PER_FOLLOW = 10;
 
