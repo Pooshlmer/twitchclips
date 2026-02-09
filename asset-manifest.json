@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/twitchclips/static/css/main.43626f70.chunk.css",
-    "main.js": "/twitchclips/static/js/main.1fe2ba05.chunk.js",
-    "main.js.map": "/twitchclips/static/js/main.1fe2ba05.chunk.js.map",
+    "main.js": "/twitchclips/static/js/main.9f150967.chunk.js",
+    "main.js.map": "/twitchclips/static/js/main.9f150967.chunk.js.map",
     "runtime-main.js": "/twitchclips/static/js/runtime-main.40315d3d.js",
     "runtime-main.js.map": "/twitchclips/static/js/runtime-main.40315d3d.js.map",
-    "static/js/2.e9e32181.chunk.js": "/twitchclips/static/js/2.e9e32181.chunk.js",
-    "static/js/2.e9e32181.chunk.js.map": "/twitchclips/static/js/2.e9e32181.chunk.js.map",
+    "static/js/2.e81ca7e3.chunk.js": "/twitchclips/static/js/2.e81ca7e3.chunk.js",
+    "static/js/2.e81ca7e3.chunk.js.map": "/twitchclips/static/js/2.e81ca7e3.chunk.js.map",
     "index.html": "/twitchclips/index.html",
-    "precache-manifest.1c55bbcff73e9a031ce10890b2a1582d.js": "/twitchclips/precache-manifest.1c55bbcff73e9a031ce10890b2a1582d.js",
+    "precache-manifest.029cf4ad6ad11bed70e9cb43f35d0ef1.js": "/twitchclips/precache-manifest.029cf4ad6ad11bed70e9cb43f35d0ef1.js",
     "service-worker.js": "/twitchclips/service-worker.js",
     "static/css/main.43626f70.chunk.css.map": "/twitchclips/static/css/main.43626f70.chunk.css.map",
-    "static/js/2.e9e32181.chunk.js.LICENSE.txt": "/twitchclips/static/js/2.e9e32181.chunk.js.LICENSE.txt"
+    "static/js/2.e81ca7e3.chunk.js.LICENSE.txt": "/twitchclips/static/js/2.e81ca7e3.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.40315d3d.js",
-    "static/js/2.e9e32181.chunk.js",
+    "static/js/2.e81ca7e3.chunk.js",
     "static/css/main.43626f70.chunk.css",
-    "static/js/main.1fe2ba05.chunk.js"
+    "static/js/main.9f150967.chunk.js"
   ]
 }
