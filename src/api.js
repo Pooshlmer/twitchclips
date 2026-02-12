@@ -27,7 +27,7 @@ export default class API {
     if (this.authtoken === null) {
       return null;
     }
-    
+
 
     let now = new Date();
     let start_date = new Date();
@@ -37,24 +37,24 @@ export default class API {
 
     for (let follow of follows) {
       let params;
-      
+
       if (dateRange !== 0) {
         params = {
-          broadcaster_id : follow.to_id, 
+          broadcaster_id: follow.broadcaster_id,
           started_at: start_date.toISOString(),
           ended_at: now.toISOString(),
           first: this.CLIPS_PER_FOLLOW,
         };
       } else {
         params = {
-          broadcaster_id : follow.to_id, 
+          broadcaster_id: follow.broadcaster_id,
           first: this.CLIPS_PER_FOLLOW,
         };
       }
       let options = {
         params: params,
       }
-  
+
       cliparray.push(axios.get(url, options));
     }
 
@@ -68,10 +68,10 @@ export default class API {
   }
 
   async getFollows(user_id) {
-    let url = 'https://api.twitch.tv/helix/users/follows';
+    let url = 'https://api.twitch.tv/helix/channels/followed';
 
     let params = {
-      from_id: user_id,
+      user_id: user_id,
       first: this.NUMBER_OF_FOLLOWS,
     }
 
@@ -83,26 +83,31 @@ export default class API {
   }
 
   async getToken() {
-    
+
     // TODO: Check if token is valid
     return this.authtoken;
   }
 
   // Create the login link for oauth2 authentication
   static getLoginLink() {
-    
+
     let url = this.TWITCH_LOGIN_LINK;
+
+    let state = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
     let params = {
       client_id: constants.TWITCH_CLIENT_ID,
       redirect_uri: this.LOCALREDIRECT,
       response_type: 'token',
-      scope: 'user:read:email',
-      // TODO: make into random string
-      state: constants.SESSION_SECRET,
+      scope: 'user:read:email user:read:follows',
+      state: state,
     }
 
+    sessionStorage.setItem('state', state);
+
     let qString = QueryString.stringify(params);
+    console.log('Login Link:', url + '?' + qString);
+    console.log('Redirect URI used:', params.redirect_uri);
 
     return (url + '?' + qString);
   }

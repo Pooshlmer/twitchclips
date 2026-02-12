@@ -1,10 +1,11 @@
 import React from 'react';
 import { instanceOf } from 'prop-types';
+import QueryString from 'query-string';
 import { withCookies, Cookies } from 'react-cookie';
 import API from './api.js';
 import './App.css';
 
-function Clip ({clipdata}) {
+function Clip({ clipdata }) {
   return (
     <div className="clip">
       <a href={clipdata.url}>
@@ -22,14 +23,14 @@ class DateSelect extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {dateRange: props.dateRange};
+    this.state = { dateRange: props.dateRange };
 
     this.handleChange = this.handleChange.bind(this);
     this.onChange = props.onChange;
   }
 
   handleChange(event) {
-    this.setState({dateRange: event.target.value});
+    this.setState({ dateRange: event.target.value });
     this.onChange(event.target.value);
   }
 
@@ -63,11 +64,19 @@ class App extends React.Component {
     let api = null;
     // If this is a redirection from a successful login get the auth token from the url
     if (document.location.hash !== "") {
-      let re = /access_token=([^&]+)/;
-      authToken = re.exec(document.location.hash)[1];
-      api = new API(authToken);
+      let query = QueryString.parse(document.location.hash);
+
+      let state = sessionStorage.getItem('state');
+      if (query.state === state) {
+        authToken = query.access_token;
+        api = new API(authToken);
+        sessionStorage.removeItem('state');
+      } else {
+        console.error('State does not match!');
+      }
     }
-    this.state = {clips: [<div>Loading clips...please wait</div>], api: api, dateRange: 1,
+    this.state = {
+      clips: [<div>Loading clips...please wait</div>], api: api, dateRange: 1,
       clipdatas0: null,
       clipdatas1: null,
       clipdatas7: null,
@@ -75,13 +84,14 @@ class App extends React.Component {
       clipexpire0: null,
       clipexpire1: null,
       clipexpire7: null,
-      clipexpire30: null,};
+      clipexpire30: null,
+    };
 
     this.handleDateChange = this.handleDateChange.bind(this);
   }
 
   resetToLogin() {
-    
+
     let clips = [<a key="loginlink" href={API.getLoginLink()}>Login to Twitch to see Clips</a>];
     this.setState({
       clips: clips,
@@ -89,7 +99,7 @@ class App extends React.Component {
   }
 
   handleDateChange(value) {
-    let newState = {dateRange: value, clips: [<div>Loading clips...please wait</div>]}
+    let newState = { dateRange: value, clips: [<div>Loading clips...please wait</div>] }
     this.setState(newState);
     this.renderClips(value);
   }
@@ -99,7 +109,7 @@ class App extends React.Component {
   }
 
   // Loads clips as an array of Clip objects
-  renderClips = async(value) => {
+  renderClips = async (value) => {
 
     let usingCache = false;
     let clipData = null;
@@ -128,8 +138,8 @@ class App extends React.Component {
               return;
             }
             userId = user.data.data[0].id;
-            cookies.set('userId', userId, {secure: true, sameSite: 'strict'});
-            
+            cookies.set('userId', userId, { secure: true, sameSite: 'strict' });
+
           }
           follows = await this.state.api.getFollows(userId);
           if (follows.status !== 200) {
@@ -138,13 +148,13 @@ class App extends React.Component {
           }
           clipData = await this.state.api.getAllClips(follows.data.data, parseInt(value));
         }
-      } catch(e) {
+      } catch (e) {
         console.log(e);
       }
     }
 
-    
-    
+
+
     console.debug(clipData);
 
     let clipdatas = [];
@@ -160,19 +170,19 @@ class App extends React.Component {
     } else {
       if (usingCache) {
         for (let clip of clipData) {
-          clipdatas.push(clip); 
+          clipdatas.push(clip);
         }
       } else {
         for (let result of clipData) {
           //console.debug(result);
           if (result.status === "fulfilled") {
-            for (let clip of result.value.data.data) { 
+            for (let clip of result.value.data.data) {
               clipdatas.push(clip);
               //clips.push(<Clip key={clip.id} clipdata={clip}/>);
             }
           } else {
             console.error(result.reason);
-          }  
+          }
         }
       }
 
@@ -184,11 +194,11 @@ class App extends React.Component {
         clips.push(<div>There are no clips from your follows that meet the specified criteria.</div>)
       }
 
-      for(let clip of clipdatas) {
-        clips.push(<Clip key={clip.id} clipdata={clip}/>);
+      for (let clip of clipdatas) {
+        clips.push(<Clip key={clip.id} clipdata={clip} />);
       }
 
-      let newstate = {clips: clips};
+      let newstate = { clips: clips };
       if (!usingCache) {
         newstate['clipdatas' + value] = clipdatas;
         newstate['clipexpire' + value] = Date.now();
@@ -197,7 +207,7 @@ class App extends React.Component {
     }
   }
 
-  render () {
+  render() {
     return (
       <div>
         <div><DateSelect dateRange={this.state.dateRange} onChange={this.handleDateChange} /></div>
